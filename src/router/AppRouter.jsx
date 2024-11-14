@@ -7,6 +7,7 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import { Home } from '../pages/Home'
 import { About } from '../pages/About'
 import { DcComics } from '../pages/DcComics';
+import { Marvel } from '../pages/Marvel';
 
 
 // se crea una estructura donde tengo la base de que se mostrara en cada pagina 
@@ -39,6 +40,7 @@ export const AppRouter = () => {
         <Route path="/" element={<Layout><Home/></Layout>} />
         <Route path="/about" element={<Layout><About/></Layout>} />
         <Route path="/dc_comics" element={<Layout><DcComics/></Layout>} />
+        <Route path="/marvel" element={<Layout><Marvel/></Layout>} />
         
     </Routes>
   )
