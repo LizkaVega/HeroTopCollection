@@ -1,47 +1,55 @@
 import PropTypes from 'prop-types';
-import { FooterComponent } from '../components/FooterComponent'
-import { NavbarComponent } from '../components/NavBarComponent'
-import { SliderComponent } from '../components/SliderComponent'
-import React from 'react'
-import { Route, Routes, useLocation } from 'react-router-dom'
-import { Home } from '../pages/Home'
-import { About } from '../pages/About'
-import { DcComics } from '../pages/DcComics';
-import { Marvel } from '../pages/Marvel';
+import { Routes, Route, useLocation } from "react-router-dom"
+import { Home } from "../pages/Home"
+import { DcComics } from "../pages/DcComics"
+import { Login } from "../pages/Login"
+import { Marvel } from "../pages/Marvel"
+import { FooterComponent } from "../components/FooterComponent"
+import { NavbarComponent } from "../components/NavbarComponent"
+import { Register } from '../pages/Register';
+import { SliderComponent } from '../components/SliderComponent';
+ import { DetailsPage } from '../pages/DetailsPage';
+import Contact from '../pages/Contact';
+import About from '../pages/About';
+ import Cart from '../pages/Cart';
+ import Checkout from '../pages/Checkout';
+ import OrderConfirmation from '../pages/OrderConfirmation';
 
 
-// se crea una estructura donde tengo la base de que se mostrara en cada pagina 
+
 const Layout = ({ children }) => {
-    const location = useLocation();
-  
-    return (
-      <>
-        <div className="min-h-screen w-full flex flex-col">
-          <NavbarComponent />
-          {location.pathname === '/' && <SliderComponent />}
-          <main className="flex flex-grow items-center justify-center">{children}</main>
-          <FooterComponent />
-        </div>
-      </>
-    );
-  };
-  // Validación de props con PropTypes
-  Layout.propTypes = {
-    children: PropTypes.node.isRequired,
-  };
+  const location = useLocation();
 
-
-
-
+  return (
+    <>
+      <div className="min-h-screen w-full flex flex-col">
+        <NavbarComponent />
+        {location.pathname === '/' && <SliderComponent />}
+        <main className="flex flex-grow items-center justify-center">{children}</main>
+        <FooterComponent />
+      </div>
+    </>
+  );
+};
+// Validación de props con PropTypes
+Layout.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export const AppRouter = () => {
   return (
     <Routes>
-        <Route path="/" element={<Layout><Home/></Layout>} />
-        <Route path="/about" element={<Layout><About/></Layout>} />
-        <Route path="/dc_comics" element={<Layout><DcComics/></Layout>} />
-        <Route path="/marvel" element={<Layout><Marvel/></Layout>} />
-        
+        <Route path="/" element={<Layout><Home /></Layout>} />
+        <Route path="/dc_comics" element={<Layout><DcComics /></Layout>} />
+        <Route path="/marvel" element={<Layout><Marvel /></Layout>} />
+        <Route path="/login" element={<Layout><Login /></Layout>} />
+        <Route path="/register" element={<Layout><Register /></Layout>} />
+        <Route path="/detail_product" element={<Layout><DetailsPage /></Layout>} />
+        <Route path="/Contact" element={<Layout><Contact /></Layout>} />
+        <Route path="/About" element={<Layout><About /></Layout>} />
+        <Route path="/Cart" element={<Layout><Cart /></Layout>} />
+        <Route path="/Checkout" element={<Layout><Checkout /></Layout>} />
+        <Route path="/Confirm" element={<Layout><OrderConfirmation /></Layout>} />
     </Routes>
   )
 }
