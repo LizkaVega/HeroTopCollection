@@ -28,24 +28,8 @@ const Cart = () => {
                     </a>
                     <div className="flex items-center justify-between md:order-3 md:justify-end">
                       <div className="flex items-center">
-                        <button
-                          type="button"
-                          className="inline-flex h-5 w-5 items-center justify-center rounded-md border bg-gray-100 hover:bg-gray-200 focus:outline-none dark:bg-gray-700"
-                        >
-                          -
-                        </button>
-                        <input
-                          type="text"
-                          className="w-10 text-center bg-transparent border-0 text-sm dark:text-white"
-                          defaultValue="2"
-                          required
-                        />
-                        <button
-                          type="button"
-                          className="inline-flex h-5 w-5 items-center justify-center rounded-md border bg-gray-100 hover:bg-gray-200 focus:outline-none dark:bg-gray-700"
-                        >
-                          +
-                        </button>
+                        
+                        
                       </div>
                       <div className="text-end md:order-4 md:w-32">
                         <p className="text-base font-bold text-gray-900 dark:text-white">
@@ -63,12 +47,7 @@ const Cart = () => {
                           type="button"
                           className="text-sm font-medium text-gray-500 dark:text-gray-400"
                         >
-                          Add to Favorites
-                        </button>
-                        <button
-                          type="button"
-                          className="text-sm font-medium text-red-600 dark:text-red-500"
-                        >
+                        
                           Remove
                         </button>
                       </div>

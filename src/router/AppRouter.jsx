@@ -15,6 +15,8 @@ import About from '../pages/About';
  import Checkout from '../pages/Checkout';
  import OrderConfirmation from '../pages/OrderConfirmation';
 
+ import { PrivateRoute } from "../services/PrivateRoute";
+
 
 
 const Layout = ({ children }) => {
@@ -48,7 +50,7 @@ export const AppRouter = () => {
         <Route path="/Contact" element={<Layout><Contact /></Layout>} />
         <Route path="/About" element={<Layout><About /></Layout>} />
         <Route path="/Cart" element={<Layout><Cart /></Layout>} />
-        <Route path="/Checkout" element={<Layout><Checkout /></Layout>} />
+        <Route path="/Checkout" element={<PrivateRoute><Layout><Checkout /></Layout></PrivateRoute>} />
         <Route path="/Confirm" element={<Layout><OrderConfirmation /></Layout>} />
     </Routes>
   )
