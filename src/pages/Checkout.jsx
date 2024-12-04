@@ -1,54 +1,115 @@
+import React, { useState } from "react";
 
 const Checkout = () => {
-    return (
-      <section className="container mx-5 bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
-        <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
-          <div className="mx-auto max-w-5xl">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
-              Payment
-            </h2>
-  
-            <div className="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12">
-              <form
-                action="#"
-                className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6 lg:max-w-xl lg:p-8"
-              >
-                <div className="mb-6 grid grid-cols-2 gap-4">
-                  <div className="col-span-2 sm:col-span-1">
-                    <label
-                      htmlFor="full_name"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Full name (as displayed on card)*
-                    </label>
-                    <input
-                      type="text"
-                      id="full_name"
-                      className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                      placeholder="Bonnie Green"
-                      required
-                    />
-                  </div>
-  
-                  <div className="col-span-2 sm:col-span-1">
-                    <label
-                      htmlFor="card-number-input"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Card number*
-                    </label>
-                    <input
-                      type="text"
-                      id="card-number-input"
-                      className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pe-10 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                      placeholder="xxxx-xxxx-xxxx-xxxx"
-                      pattern="^4[0-9]{12}(?:[0-9]{3})?$"
-                      required
-                    />
-                  </div>
+  const products = JSON.parse(localStorage.getItem("products")) || [];
+  const subtotal = parseFloat(localStorage.getItem("subtotal")) || 0;
 
+  // Calcular el impuesto (ejemplo: 7% de impuestos)
+  const tax = subtotal * 0.07;
 
-                  <div>
+  // Definir un costo de envío (puedes ajustarlo según tus necesidades)
+  const shipping = 10; // O alguna lógica para calcularlo
+
+  // Calcular el total
+  const total = subtotal + tax + shipping;
+
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // Función que maneja el proceso de pago
+  const handlePayment = async (event) => {
+    event.preventDefault();
+
+    // Obtener el token del localStorage
+    const token = localStorage.getItem("Authorization");
+
+    if (!token) {
+      setErrorMessage("No estás autenticado. Inicia sesión para continuar.");
+      return;
+    }
+
+    // Aquí puedes agregar la lógica para hacer la solicitud de pago,
+    // pasando el token y la información del pedido al backend.
+    try {
+      const response = await fetch("http://localhost:5223/api/user/order", {
+        method: "POST",
+        headers: {
+          "Authorization": `${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(products),
+      });
+
+      if (response.ok) {
+        // Si el pago es exitoso, redirigir o mostrar éxito
+        alert("Pago exitoso");
+        localStorage.removeItem("products");
+        localStorage.removeItem("subtotal");
+        window.location.href = "/home";
+      } else {
+        // Si hay un error, manejar el error de manera adecuada
+        const errorData = await response.json();
+        setErrorMessage(errorData.message || "Hubo un error con el pago.");
+      }
+    } catch (error) {
+      setErrorMessage("Error al procesar el pago. Intenta nuevamente.");
+    }
+  };
+
+  return (
+    <section className="container mx-5 bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
+      <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
+        <div className="mx-auto max-w-5xl">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+            Payment
+          </h2>
+
+          {errorMessage && (
+            <div className="bg-red-100 text-red-700 p-2 rounded-lg mb-4">
+              {errorMessage}
+            </div>
+          )}
+
+          <div className="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12">
+            <form
+              onSubmit={handlePayment}
+              className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6 lg:max-w-xl lg:p-8"
+            >
+              {/* Información de la tarjeta de crédito */}
+              <div className="mb-6 grid grid-cols-2 gap-4">
+                <div className="col-span-2 sm:col-span-1">
+                  <label
+                    htmlFor="full_name"
+                    className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Full name (as displayed on card)*
+                  </label>
+                  <input
+                    type="text"
+                    id="full_name"
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                    placeholder="Bonnie Green"
+                    required
+                  />
+                </div>
+
+                <div className="col-span-2 sm:col-span-1">
+                  <label
+                    htmlFor="card-number-input"
+                    className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Card number*
+                  </label>
+                  <input
+                    type="text"
+                    id="card-number-input"
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pe-10 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                    placeholder="xxxx-xxxx-xxxx-xxxx"
+                    pattern="^4[0-9]{12}(?:[0-9]{3})?$"
+                    required
+                  />
+                </div>
+
+                <div>
                   <label
                     htmlFor="card-expiration-input"
                     className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
@@ -82,6 +143,7 @@ const Checkout = () => {
                     />
                   </div>
                 </div>
+
                 <div>
                   <label
                     htmlFor="cvv-input"
@@ -99,86 +161,67 @@ const Checkout = () => {
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"
                         viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="2"
                       >
                         <path
-                          fillRule="evenodd"
-                          d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm9.408-5.5a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2h-.01ZM10 10a1 1 0 1 0 0 2h1v3h-1a1 1 0 1 0 0 2h4a1 1 0 1 0 0-2h-1v-4a1 1 0 0 0-1-1h-2Z"
-                          clipRule="evenodd"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M14 2a6 6 0 0 0-8 0 6 6 0 0 0 0 8 6 6 0 0 0 8 0 6 6 0 0 0 0-8Zm-6 6a2 2 0 1 1 4 0 2 2 0 0 1-4 0Z"
                         />
                       </svg>
                     </button>
-                    <div
-                      id="cvv-desc"
-                      role="tooltip"
-                      className="tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700"
-                    >
-                      The last 3 digits on back of card
-                      <div className="tooltip-arrow" data-popper-arrow></div>
-                    </div>
                   </label>
+                  <div
+                    id="cvv-desc"
+                    role="tooltip"
+                    className="hidden w-44 rounded-lg border border-gray-200 bg-gray-700 p-2 text-xs text-white shadow-sm"
+                  >
+                    The CVV is the 3-digit number on the back of your card.
+                  </div>
                   <input
-                    type="number"
                     id="cvv-input"
-                    aria-describedby="helper-text-explanation"
-  
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                    placeholder="•••"
+                    type="text"
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 ps-9 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                    placeholder="***"
                     required
                   />
                 </div>
               </div>
 
-              <button
-                type="submit"
-                className="flex w-full items-center justify-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-              >
-                Pay now
-              </button>
-            </form>
-
-            <div className="mt-6 grow sm:mt-8 lg:mt-0">
-              <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6 lg:max-w-sm lg:p-8">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Payment Summary
+              {/* Resumen de la compra */}
+              <div className="mb-4 border-t border-gray-200 pt-6 dark:border-gray-600">
+                <h3 className="text-sm font-semibold text-gray-800 dark:text-white">
+                  Order Summary
                 </h3>
-
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    Subtotal
-                  </span>
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                    $249.99
-                  </span>
+                <div className="flex justify-between text-sm text-gray-500 dark:text-gray-300">
+                  <span>Subtotal</span>
+                  <span>${subtotal.toFixed(2)}</span>
                 </div>
-
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    Shipping
-                  </span>
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                    $9.99
-                  </span>
+                <div className="flex justify-between text-sm text-gray-500 dark:text-gray-300">
+                  <span>Tax</span>
+                  <span>${tax.toFixed(2)}</span>
                 </div>
-
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    Tax
-                  </span>
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                    $24.00
-                  </span>
+                <div className="flex justify-between text-sm text-gray-500 dark:text-gray-300">
+                  <span>Shipping</span>
+                  <span>${shipping.toFixed(2)}</span>
                 </div>
-
-                <div className="flex justify-between border-t border-gray-200 pt-4 dark:border-gray-700">
-                  <span className="text-base font-medium text-gray-900 dark:text-white">
-                    Total
-                  </span>
-                  <span className="text-base font-semibold text-gray-900 dark:text-white">
-                    $283.98
-                  </span>
+                <div className="flex justify-between text-base font-semibold text-gray-900 dark:text-white">
+                  <span>Total</span>
+                  <span>${total.toFixed(2)}</span>
                 </div>
               </div>
-            </div>
+
+              {/* Botón de pago */}
+              <div className="mt-6">
+                <button
+                  type="submit"
+                  className="w-full rounded-lg bg-blue-600 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-700"
+                >
+                  Pay ${total.toFixed(2)}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

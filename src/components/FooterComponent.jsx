@@ -9,7 +9,7 @@ export function FooterComponent() {
         <div className="w-full justify-between sm:flex sm:items-center sm:justify-between">
           <Footer.Brand
             href="https://flowbite.com"
-            src="logo.png"
+            src="src\assets\Carrousel\Imagen de WhatsApp 2024-11-30 a las 15.39.44_b576d66e.jpg"
             alt="Logo"
             name="HeroTopCollection"
           />
